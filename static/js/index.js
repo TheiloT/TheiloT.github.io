@@ -127,7 +127,7 @@ $(document).ready(function() {
 		slidesToShow: 1,
 		loop: true,
 		infinite: true,
-		autoplay: true,
+		autoplay: false,
 		autoplaySpeed: 5000,
     }
 
@@ -138,5 +138,41 @@ $(document).ready(function() {
     
     // Setup video autoplay for carousel
     setupVideoCarouselAutoplay();
+
+    // Restart GIFs when they become visible in carousel
+    const gifRadiance = document.getElementById('gif_radiance');
+    const gifAltitude = document.getElementById('gif_altitude');
+    
+    if (gifRadiance && gifAltitude) {
+      let wasVisible = false;
+      
+      // Get the carousel wrapper to check viewport
+      const itemParent = gifRadiance.closest('.item');
+      const carouselWrapper = itemParent ? itemParent.closest('.results-carousel') : null;
+      
+      // Poll to check if GIFs are visible in the carousel viewport
+      setInterval(function() {
+        if (!itemParent || !carouselWrapper) return;
+        
+        // Check if the item is actually in the visible part of the carousel
+        const gifRect = gifRadiance.getBoundingClientRect();
+        const wrapperRect = carouselWrapper.getBoundingClientRect();
+        
+        // Check if GIF is within the carousel's visible rectangular area
+        const isInViewport = !(gifRect.right < wrapperRect.left || 
+                              gifRect.left > wrapperRect.right || 
+                              gifRect.bottom < wrapperRect.top || 
+                              gifRect.top > wrapperRect.bottom);
+        
+        if (isInViewport && !wasVisible) {
+          wasVisible = true;
+          if (typeof restartGIFs === 'function') {
+            restartGIFs();
+          }
+        } else if (!isInViewport && wasVisible) {
+          wasVisible = false;
+        }
+      }, 500); // Check every 500ms
+    }
 
 })

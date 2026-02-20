@@ -1,4 +1,4 @@
-# skynerf.github.io
+# theilot.github.io
 
 Website for the article "Sky-NeRF: Learning 4D Cloud Topography in a Dynamic Neural Radiance Field".
 
